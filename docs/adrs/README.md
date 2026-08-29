@@ -2,4 +2,4 @@
 
 Este diretório armazena os ADRs (Architectural Decision Records) do projeto.
 Cada decisão arquitetural relevante deve ser registrada aqui em arquivos individuais,
-nomeados sequencialmente (por exemplo `0001-titulo-da-decisao.md`).
+nomeados no formato `ADR-NNN-titulo-em-kebab-case.md` (ex.: `ADR-001-outbox-pattern-mysql.md`).

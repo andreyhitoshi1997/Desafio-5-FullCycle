@@ -1,68 +1,38 @@
 # Da Reunião ao Documento: Design Docs Gerados por IA
 
-Pacote de design docs do **Sistema de Webhooks de Notificação de Pedidos**, produzido a partir da transcrição
-de uma reunião técnica (`TRANSCRICAO.md`) e do código-fonte real do Order Management System deste repositório.
-O enunciado completo do desafio está no repositório base:
+Pacote de design docs do **Sistema de Webhooks de Notificação de Pedidos**, produzido a partir de
+`TRANSCRICAO.md` e do código-fonte real deste OMS. Enunciado completo do desafio:
 [devfullcycle/mba-ia-desafio-design-docs-com-ia](https://github.com/devfullcycle/mba-ia-desafio-design-docs-com-ia).
-
-Este README documenta o **processo de produção** dos documentos, não a aplicação em si (para isso, ver o
-código em `src/`, `prisma/` e `tests/`, que não foram alterados).
 
 ## Sobre o desafio
 
-O desafio propõe transformar a transcrição literal de uma reunião de decisão técnica — cinco pessoas (Tech
-Lead, PM, dois engenheiros e uma engenheira de segurança) discutindo por ~55 minutos como construir um sistema
-de webhooks — num pacote de documentação de engenharia acionável: um PRD que justifica a feature para o
-negócio, um RFC que propõe a arquitetura e expõe alternativas descartadas, sete ADRs que registram cada
-decisão isolada, um FDD que detalha como implementar (contratos HTTP, erros, fluxos, integração com o código
-existente), e um Tracker que amarra cada afirmação dos documentos a um trecho específico da transcrição ou a
-um arquivo real do código.
-
-A regra central do desafio é a **rastreabilidade**: nada nos documentos pode ser inventado. Toda decisão,
-requisito ou restrição precisa apontar para um `[hh:mm] Nome` da transcrição ou para um caminho de arquivo do
-código-fonte. Identificar o que foi **descartado ou adiado** na reunião (rate limiting, e-mail de alerta,
-dashboard, webhooks inbound) é tão parte da tarefa quanto identificar o que entrou.
+Transformar a transcrição literal de uma reunião técnica (Tech Lead, PM, dois engenheiros e uma engenheira de
+segurança, ~55 minutos) num pacote de documentação acionável: PRD (por quê/o quê), RFC (proposta de arquitetura
+e alternativas descartadas), 7 ADRs (cada decisão isolada), FDD (como implementar) e um Tracker que rastreia
+cada afirmação até a transcrição ou o código. A regra central é rastreabilidade: nada pode ser inventado, e
+identificar o que foi **descartado/adiado** (rate limiting, e-mail de alerta, dashboard, webhooks inbound) é
+tão parte da tarefa quanto identificar o que entrou.
 
 ## Ferramentas de IA utilizadas
 
 | Ferramenta | Papel |
 |---|---|
-| **Claude Code** (Sonnet 5) | Única ferramenta de IA usada, de ponta a ponta: leitura integral da transcrição e do código-fonte real (não apenas trechos colados), exploração da estrutura de módulos/erros/schemas existente, extração e filtragem dos requisitos/decisões/restrições, redação dos sete documentos, montagem do Tracker de rastreabilidade linha a linha, e importação/versionamento do repositório base via Git. |
-
-Nenhuma outra ferramenta (ChatGPT, Cursor, Gemini) foi usada nesta produção — optou-se por manter tudo dentro
-de uma única sessão de Claude Code para preservar consistência de contexto entre os sete documentos, evitando
-o risco de um documento divergir do outro por terem sido gerados em ferramentas/sessões diferentes.
+| **Claude Code** (Sonnet 5) | Única ferramenta usada: leitura integral da transcrição e do código real, extração e filtragem de requisitos/decisões, redação dos documentos, montagem do Tracker linha a linha, e auditoria final de consistência contra o código. |
 
 ## Workflow adotado
 
-1. **Setup do repositório.** O repositório de destino estava vazio (sem commits). Antes de qualquer documento,
-   foi feita a importação do repositório base (`devfullcycle/mba-ia-desafio-design-docs-com-ia`) via
-   mirror-clone + push, preservando o histórico original de commits, e o trabalho passou a ocorrer na branch
-   `main`.
-2. **Leitura integral da transcrição** (`TRANSCRICAO.md`, as 324 linhas, do início ao fim) e **exploração do
-   código real** (não resumos): `order.service.ts`, `order.status.ts`, a hierarquia de erros em
-   `src/shared/errors/`, `error.middleware.ts`, `auth.middleware.ts`, `validate.middleware.ts`, o logger Pino,
-   `server.ts`, `routes/index.ts` e `prisma/schema.prisma` — para que toda referência a "reuso de padrão
-   existente" nos documentos apontasse para código que de fato existe.
-3. **ADRs primeiro** (7 arquivos): cada uma das 6 decisões arquiteturais principais discutidas na reunião virou
-   um ADR isolado, mais um sétimo cobrindo a modelagem do payload do outbox (snapshot vs. referência, UUID vs.
-   auto-incremento) — uma decisão real da reunião, mas secundária o suficiente para não caber nas 6
-   categorias principais.
-4. **RFC**, consolidando a proposta em cima dos ADRs já escritos, com as alternativas descartadas (chamada
-   síncrona, Redis Streams, trigger de banco, exactly-once) e as questões que a própria reunião deixou em
-   aberto (rate limiting, ordenação ao escalar, endurecimento de autorização).
-5. **FDD**, detalhando contratos HTTP, matriz de erros `WEBHOOK_*`, fluxos passo a passo e a seção obrigatória
-   de integração com pelo menos 4 arquivos reais do código.
-6. **PRD**, por último entre os documentos grandes — com RFC, FDD e ADRs prontos, consolidar o racional de
-   produto (escopo, métricas, riscos) foi majoritariamente um exercício de síntese e checagem de rastreabilidade.
-7. **Tracker**, montado varrendo os seis documentos já prontos e mapeando cada requisito/decisão/restrição
-   identificável a uma linha com fonte e localização.
-8. **Este README**, por último, já com o processo completo para descrever com precisão.
+1. Leitura integral de `TRANSCRICAO.md` e exploração do código real (`order.service.ts`, `order.status.ts`,
+   hierarquia de erros, middlewares, logger, `server.ts`, `routes/index.ts`, `prisma/schema.prisma`).
+2. **ADRs primeiro** (7 arquivos) — as 6 decisões arquiteturais principais + 1 decisão secundária de modelagem
+   (snapshot de payload / UUID no outbox).
+3. **RFC**, consolidando a proposta em cima dos ADRs, com alternativas descartadas e questões deixadas em aberto.
+4. **FDD**, com fluxos, contratos HTTP, matriz de erros `WEBHOOK_*` e a seção de integração com o código existente.
+5. **PRD**, por último entre os documentos grandes — com RFC/FDD/ADRs prontos, virou síntese e checagem de escopo.
+6. **Tracker**, varrendo os documentos prontos e mapeando cada item a uma origem.
+7. Auditoria final: releitura de cada afirmação técnica do FDD/ADRs contra o código-fonte real, arquivo por
+   arquivo, para confirmar que nenhum método, classe ou caminho citado é inexistente ou está descrito errado.
 
 ## Prompts customizados
-
-Dois prompts guiaram as etapas mais sensíveis a alucinação — filtragem de escopo e montagem do tracker — em
-vez de pedidos genéricos do tipo "gere o PRD a partir da transcrição":
 
 ```
 Releia TRANSCRICAO.md do início ao fim. Para cada tópico discutido, classifique em exatamente uma categoria:
@@ -87,46 +57,25 @@ tem origem identificável. Não aceite "inferido do contexto geral da reunião" 
 
 ## Iterações e ajustes
 
-Cinco correções concretas ao longo da produção, não geração de primeira tentativa sem revisão:
-
-1. **Comando de execução incompatível com a tarefa.** A automação inicialmente disparada (`dev-loop`, com
-   ciclo dev → QA → security e critério de saída baseado em "build compila e testes verdes") foi desenhada
-   para mudança de código, não para produção documental — e o desafio proíbe explicitamente alterar
-   `src/`/`prisma/`/`tests/`. Em vez de forçar o encaixe (rodar testes que não existem para os documentos), o
-   ciclo foi adaptado: autoria dos documentos → verificação cruzada de consistência com a transcrição/código →
-   revisão de segurança do conteúdo relativo a HMAC/secret, sem inventar uma etapa de "build" que não se
-   aplica.
-2. **Estado do repositório assumido incorretamente no início.** A suposição inicial era que o diretório de
-   trabalho já continha o repositório base clonado. A checagem (`git log`, `git ls-remote`) revelou um
-   repositório vazio, sem nenhum commit — foi preciso importar o repositório base antes de qualquer documento
-   poder ser escrito, evitando presumir uma estrutura de arquivos que ainda não existia.
-3. **Objetivo de métrica quase inflado com um número não sourceável.** Um primeiro rascunho do PRD tentou
-   expressar a meta de latência como "≥95% das entregas em até 10s" — mas a transcrição não contém nenhuma
-   porcentagem, só o teto absoluto de 10 segundos citado pelo PM. A meta foi reescrita usando apenas os
-   números que a reunião de fato definiu (10s de teto, 2s de polling como pior caso de latência mínima), em
-   vez de inventar uma taxa de sucesso plausível, mas não dita por ninguém.
-4. **Matriz de erros do FDD superficial na primeira passada.** A transcrição só nomeia três códigos
-   `WEBHOOK_*` literalmente (`WEBHOOK_NOT_FOUND`, `WEBHOOK_INVALID_URL`, `WEBHOOK_SECRET_REQUIRED`). Uma
-   matriz de erros com só três linhas não cobre os cenários que o próprio FDD descreve (payload grande demais,
-   timeout, replay de DLQ inexistente). A matriz foi estendida para 9 códigos seguindo o prefixo `WEBHOOK_`
-   já decidido, mas cada linha estendida foi marcada no Tracker como "extensão do padrão" em vez de aparentar
-   ser uma citação literal — para não passar uma falsa certeza de que aquele código específico foi dito em
-   voz alta na reunião.
-5. **Tracker com contagem de cobertura incorreta na primeira escrita.** O resumo de cobertura no rodapé do
-   Tracker foi escrito antes da tabela estar fechada, com números arredondados ("100 linhas, 85 TRANSCRICAO").
-   Após a tabela completa (107 linhas), os números foram recontados e corrigidos (91 TRANSCRICAO, 16 CODIGO)
-   para o rodapé não contradizer a própria tabela que ele resume.
+1. **Objetivo de métrica quase inflado.** Um rascunho do PRD tentou expressar a meta como "≥95% das entregas
+   em até 10s" — a transcrição só define um teto absoluto de 10s, sem nenhuma porcentagem. Reescrito usando
+   apenas os números que a reunião de fato definiu.
+2. **Matriz de erros superficial.** A transcrição só nomeia 3 códigos `WEBHOOK_*` literalmente. Uma matriz de
+   3 linhas não cobria os cenários que o próprio FDD descreve (payload grande, timeout, replay inexistente).
+   Estendida para 9 códigos, com cada linha estendida marcada no Tracker como "extensão do padrão" em vez de
+   parecer citação literal da reunião.
+3. **Cobertura do Tracker escrita antes da tabela fechar.** O resumo no rodapé tinha números arredondados
+   escritos antes da tabela estar completa. Recontado após a tabela final (107 linhas: 91 TRANSCRICAO, 16
+   CODIGO) para não contradizer a própria tabela que resume.
+4. **Auditoria final linha a linha.** Depois dos documentos prontos, cada referência técnica do FDD e dos
+   ADRs (nomes de método, classes de erro, arquivos citados na seção de integração) foi conferida de novo
+   contra o código-fonte real, um arquivo por vez, em vez de confiar na primeira leitura.
 
 ## Como navegar a entrega
 
-Ordem sugerida de leitura, da mais alta para a mais baixa altitude:
-
-1. **[docs/PRD.md](docs/PRD.md)** — por quê e o quê: problema, público, escopo, métricas de sucesso.
-2. **[docs/RFC.md](docs/RFC.md)** — como propomos resolver, alternativas descartadas, questões em aberto.
-3. **[docs/adrs/](docs/adrs/)** — as 7 decisões arquiteturais isoladas (`ADR-001` a `ADR-007`), cada uma com
-   contexto, alternativas e consequências.
-4. **[docs/FDD.md](docs/FDD.md)** — como construir: fluxos, contratos HTTP, matriz de erros, integração com o
-   código existente (`src/modules/orders/order.service.ts` e outros).
-5. **[docs/TRACKER.md](docs/TRACKER.md)** — para auditar qualquer afirmação dos documentos acima até sua
-   origem na transcrição ou no código.
-6. **`TRANSCRICAO.md`** — a fonte primária, para quem quiser conferir qualquer citação no contexto original.
+1. **[docs/PRD.md](docs/PRD.md)** — problema, público, escopo, métricas de sucesso.
+2. **[docs/RFC.md](docs/RFC.md)** — proposta de arquitetura, alternativas descartadas, questões em aberto.
+3. **[docs/adrs/](docs/adrs/)** — as 7 decisões isoladas (`ADR-001` a `ADR-007`).
+4. **[docs/FDD.md](docs/FDD.md)** — fluxos, contratos HTTP, matriz de erros, integração com o código existente.
+5. **[docs/TRACKER.md](docs/TRACKER.md)** — rastreabilidade de cada afirmação até a transcrição ou o código.
+6. **`TRANSCRICAO.md`** — fonte primária.
