@@ -211,22 +211,27 @@ export class OrderService {
     const unavailable: { sku: string; requested: number; available: number }[] = [];
     for (const item of items) {
       const product = products.find((p) => p.id === item.productId);
-      if (!product || product.stockQuantity < item.quantity) {
+      if (!product) {
+        unavailable.push({ sku: item.productId, requested: item.quantity, available: 0 });
+        continue;
+      }
+      // Conditional update (not a plain decrement) so the check and the debit happen
+      // atomically against the row's current value, closing the check-then-act race
+      // where two concurrent orders both read stock before either commits.
+      const result = await tx.product.updateMany({
+        where: { id: item.productId, stockQuantity: { gte: item.quantity } },
+        data: { stockQuantity: { decrement: item.quantity } },
+      });
+      if (result.count === 0) {
         unavailable.push({
-          sku: product?.sku ?? item.productId,
+          sku: product.sku,
           requested: item.quantity,
-          available: product?.stockQuantity ?? 0,
+          available: product.stockQuantity,
         });
       }
     }
     if (unavailable.length > 0) {
       throw new InsufficientStockError(unavailable);
-    }
-    for (const item of items) {
-      await tx.product.update({
-        where: { id: item.productId },
-        data: { stockQuantity: { decrement: item.quantity } },
-      });
     }
   }
 

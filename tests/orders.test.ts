@@ -194,6 +194,47 @@ describe('Orders', () => {
     expect(pending.body.pagination.total).toBe(2);
   });
 
+  it('never oversells stock when two orders are paid concurrently for the same product', async () => {
+    const app = getTestApp();
+    const { token } = await bootstrapAuthenticatedUser();
+    const customer = await createTestCustomer();
+    const product = await createTestProduct({ stockQuantity: 5 });
+
+    // Created sequentially: order creation itself has a separate, unrelated race
+    // (reserveOrderNumber's upsert on an empty sequence table) that isn't what this
+    // test targets. The scenario under test is two concurrent PAID transitions
+    // racing over the same product's stock.
+    const orderA = await request(app)
+      .post('/api/v1/orders')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ customerId: customer.id, items: [{ productId: product.id, quantity: 3 }] });
+    const orderB = await request(app)
+      .post('/api/v1/orders')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ customerId: customer.id, items: [{ productId: product.id, quantity: 4 }] });
+    expect(orderA.status).toBe(201);
+    expect(orderB.status).toBe(201);
+
+    const [payA, payB] = await Promise.all([
+      request(app)
+        .patch(`/api/v1/orders/${orderA.body.id}/status`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ toStatus: 'PAID' }),
+      request(app)
+        .patch(`/api/v1/orders/${orderB.body.id}/status`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ toStatus: 'PAID' }),
+    ]);
+
+    const statuses = [payA.status, payB.status].sort();
+    // 5 in stock can satisfy exactly one of a 3-unit or a 4-unit request, never both.
+    expect(statuses).toEqual([200, 422]);
+
+    const refreshed = await prisma.product.findUnique({ where: { id: product.id } });
+    expect(refreshed?.stockQuantity).toBeGreaterThanOrEqual(0);
+    expect([2, 1]).toContain(refreshed?.stockQuantity);
+  });
+
   it('refuses to delete an order that is not PENDING or CANCELLED', async () => {
     const app = getTestApp();
     const { token } = await bootstrapAuthenticatedUser();
