@@ -1,7 +1,9 @@
 # ADR-007: Snapshot do payload no momento da inserção no outbox, com id UUID
 
-- **Status:** Aceito
-- **Data:** 2026-08-29
+## Status
+
+**Aceito** — 2026-08-29
+
 - **Decisores:** Larissa (Tech Lead), Diego (Eng. Sênior, Plataforma), Bruno (Eng. Pleno, Pedidos)
 - **Fonte:** `TRANSCRICAO.md` [09:51]–[09:52] (Diego, Larissa, Bruno)
 

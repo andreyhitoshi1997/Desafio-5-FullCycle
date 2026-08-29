@@ -1,7 +1,9 @@
 # ADR-005: Garantia at-least-once com dedup via X-Event-Id
 
-- **Status:** Aceito
-- **Data:** 2026-08-29
+## Status
+
+**Aceito** — 2026-08-29
+
 - **Decisores:** Diego (Eng. Sênior, Plataforma), Sofia (Eng. Segurança), Marcos (PM)
 - **Fonte:** `TRANSCRICAO.md` [09:24]–[09:26] (Diego, Bruno, Sofia, Marcos)
 

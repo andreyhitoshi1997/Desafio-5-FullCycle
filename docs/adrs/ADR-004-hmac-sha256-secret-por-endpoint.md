@@ -1,7 +1,9 @@
 # ADR-004: Autenticação HMAC-SHA256 com secret por endpoint e rotação com grace period
 
-- **Status:** Aceito
-- **Data:** 2026-08-29
+## Status
+
+**Aceito** — 2026-08-29
+
 - **Decisores:** Sofia (Eng. Segurança), Diego (Eng. Sênior, Plataforma), Bruno (Eng. Pleno, Pedidos)
 - **Fonte:** `TRANSCRICAO.md` [09:19]–[09:22] (Sofia, Bruno, Diego)
 

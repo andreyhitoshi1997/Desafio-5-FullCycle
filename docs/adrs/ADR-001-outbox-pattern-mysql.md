@@ -1,7 +1,9 @@
 # ADR-001: Padrão Outbox no MySQL para emissão de eventos de webhook
 
-- **Status:** Aceito
-- **Data:** 2026-08-29
+## Status
+
+**Aceito** — 2026-08-29
+
 - **Decisores:** Larissa (Tech Lead), Diego (Eng. Sênior, Plataforma), Bruno (Eng. Pleno, Pedidos)
 - **Fonte:** `TRANSCRICAO.md` [09:03]–[09:08] (Bruno, Diego, Larissa)
 

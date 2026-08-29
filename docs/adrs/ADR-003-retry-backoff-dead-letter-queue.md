@@ -1,7 +1,9 @@
 # ADR-003: Retry com backoff exponencial (5 tentativas) e Dead Letter Queue em tabela separada
 
-- **Status:** Aceito
-- **Data:** 2026-08-29
+## Status
+
+**Aceito** — 2026-08-29
+
 - **Decisores:** Diego (Eng. Sênior, Plataforma), Larissa (Tech Lead), Bruno (Eng. Pleno, Pedidos)
 - **Fonte:** `TRANSCRICAO.md` [09:14]–[09:19] (Diego, Bruno, Larissa, Marcos)
 

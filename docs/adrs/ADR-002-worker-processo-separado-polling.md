@@ -1,7 +1,9 @@
 # ADR-002: Worker de entrega em processo separado, com polling de 2 segundos
 
-- **Status:** Aceito
-- **Data:** 2026-08-29
+## Status
+
+**Aceito** — 2026-08-29
+
 - **Decisores:** Diego (Eng. Sênior, Plataforma), Larissa (Tech Lead), Bruno (Eng. Pleno, Pedidos)
 - **Fonte:** `TRANSCRICAO.md` [09:08]–[09:11] (Diego, Bruno, Larissa, Marcos)
 

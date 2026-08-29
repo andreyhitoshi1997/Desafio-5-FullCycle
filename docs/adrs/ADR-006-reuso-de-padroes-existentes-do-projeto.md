@@ -1,7 +1,9 @@
 # ADR-006: Reuso máximo dos padrões existentes do projeto para o módulo de webhooks
 
-- **Status:** Aceito
-- **Data:** 2026-08-29
+## Status
+
+**Aceito** — 2026-08-29
+
 - **Decisores:** Larissa (Tech Lead), Bruno (Eng. Pleno, Pedidos), Diego (Eng. Sênior, Plataforma)
 - **Fonte:** `TRANSCRICAO.md` [09:27]–[09:30] (Bruno, Diego, Larissa)
 
